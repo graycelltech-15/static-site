@@ -1,10 +1,11 @@
 <?php
+
 // ===== CONFIG =====
-$ADMIN_EMAIL = "lavishk@graycelltech.com";     // Change this
-$FROM_EMAIL  = "lavishk@graycelltech.com";     // Must be a domain you own
+$ADMIN_EMAIL = "marketing@bistraining.ca";  
+$FROM_EMAIL  = "info@momentum-group.ca";     
 $SITE_NAME   = "Momentum";
-$LOGO_URL    = "https://graycelltech.net/gct/Momentum/images/Logo_Momentum_BlackFont.png
-"; // Absolute URL for email
+$LOGO_URL    = "https://graycelltech.net/gct/Momentum/images/Logo_Momentum_BlackFont.png"; // Absolute URL for email
+$SMTP2GO_API_KEY = "api-44F79F1D7F4B4E4D86B11B1755234E39"; 
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") { 
     http_response_code(405); 
@@ -83,19 +84,38 @@ $bodyUser = "
 </html>
 ";
 
-// Headers
-$headersAdmin  = "From: $FROM_EMAIL\r\n";
-$headersAdmin .= "Reply-To: $email\r\n";
-$headersAdmin .= "MIME-Version: 1.0\r\n";
-$headersAdmin .= "Content-Type: text/html; charset=UTF-8\r\n";
+// ==== SEND EMAIL USING SMTP2GO API ====
+function sendSMTP2GO($to, $subject, $htmlBody, $from, $replyTo = null) {
+    global $SMTP2GO_API_KEY;
 
-$headersUser   = "From: $FROM_EMAIL\r\n";
-$headersUser  .= "MIME-Version: 1.0\r\n";
-$headersUser  .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $payload = [
+        "api_key" => $SMTP2GO_API_KEY,
+        "to"      => [$to],
+        "sender"  => $from,
+        "subject" => $subject,
+        "html_body" => $htmlBody
+    ];
+
+    if ($replyTo) {
+        $payload["reply_to"] = $replyTo;
+    }
+
+    $ch = curl_init("https://api.smtp2go.com/v3/email/send");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return $response;
+}
 
 // Send mails
-@mail($ADMIN_EMAIL, $subjectAdmin, $bodyAdmin, $headersAdmin);
-@mail($email, $subjectUser, $bodyUser, $headersUser);
+sendSMTP2GO($ADMIN_EMAIL, $subjectAdmin, $bodyAdmin, $FROM_EMAIL, $email);
+sendSMTP2GO($email, $subjectUser, $bodyUser, $FROM_EMAIL);
 
 echo "success";
+
+
 ?>

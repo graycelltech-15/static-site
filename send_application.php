@@ -1,9 +1,11 @@
 <?php
+
 // ===== CONFIG =====
-$ADMIN_EMAIL = "lavishk@graycelltech.com";     // Change this
-$FROM_EMAIL  = "lavishk@graycelltech.com";     // Must be a domain you own
+$ADMIN_EMAIL = "marketing@bistraining.ca";    
+$FROM_EMAIL  = "info@momentum-group.ca";     
 $SITE_NAME   = "Momentum";
 $LOGO_URL    = "https://yourdomain.com/images/Logo_Momentum_BlackFont.png"; // Absolute URL for email
+$SMTP2GO_API_KEY = "api-44F79F1D7F4B4E4D86B11B1755234E39"; 
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") { 
     http_response_code(405); 
@@ -70,13 +72,28 @@ $bodyAdmin = "
 </html>
 ";
 
-// Headers
-$headers  = "From: $FROM_EMAIL\r\n";
-$headers .= "MIME-Version: 1.0\r\n";
-$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+// ==== SEND EMAIL USING SMTP2GO API ====
+$payload = json_encode([
+    "api_key" => $SMTP2GO_API_KEY,
+    "to"      => [$ADMIN_EMAIL],
+    "sender"  => $FROM_EMAIL,
+    "subject" => $subject,
+    "html_body" => $bodyAdmin
+]);
 
-// Send to admin
-@mail($ADMIN_EMAIL, $subject, $bodyAdmin, $headers);
+$ch = curl_init("https://api.smtp2go.com/v3/email/send");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+// Optional: You can check $response if you want
+// file_put_contents('smtp2go_log.txt', $response.PHP_EOL, FILE_APPEND);
 
 echo "success";
+
+
 ?>
