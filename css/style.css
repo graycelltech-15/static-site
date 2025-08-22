@@ -238,6 +238,10 @@ nav ul li a:hover {
 
 /* swiper slider */
 
+.logo-slider {
+    display: none;
+}
+
 .logo-slider .container {
     padding-top: 0px;
 }
@@ -637,6 +641,7 @@ textarea {
     margin-left: 10px;
     font-size: 16px;
     text-decoration: none;
+    display: none;
 }
 
 .social-icons a:hover {
