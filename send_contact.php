@@ -1,7 +1,7 @@
 <?php
 
 // ===== CONFIG =====
-$ADMIN_EMAIL = "marketing@bistraining.ca"; //admin email
+$ADMIN_EMAIL = "arshdeep@graycelltech.com"; //admin email
 $FROM_EMAIL  = "info@momentum-group.ca";     
 $SITE_NAME   = "Momentum";
 $LOGO_URL    = "https://graycelltech.net/gct/Momentum/images/Logo_Momentum_BlackFont.png"; // Absolute URL for email
@@ -27,7 +27,8 @@ if (!preg_match("/^[A-Za-z][A-Za-z\s'\-]{1,}$/", $lname)) $errors[] = "lname";
 if (!filter_var($email, FILTER_VALIDATE_EMAIL))          $errors[] = "email";
 $digits = preg_replace("/\D/", "", $tel);
 if (!(preg_match("/^[0-9()+\-\s]{7,20}$/", $tel) && strlen($digits) >= 7 && strlen($digits) <= 15)) $errors[] = "tel";
-if (strlen($msg) < 5) $errors[] = "msg";
+// if (strlen($msg) < 5) $errors[] = "msg";
+if ($msg === "") $errors[] = "msg";
 
 if ($errors) { 
     echo "error"; 

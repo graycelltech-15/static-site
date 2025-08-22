@@ -1,7 +1,8 @@
 <?php
 
 // ===== CONFIG =====
-$ADMIN_EMAIL = "marketing@bistraining.ca"; //admin email    
+// $ADMIN_EMAIL = "marketing@bistraining.ca";
+$ADMIN_EMAIL = "arshdeep@graycelltech.com"; //admin email     
 $FROM_EMAIL  = "info@momentum-group.ca";     
 $SITE_NAME   = "Momentum";
 $LOGO_URL    = "https://yourdomain.com/images/Logo_Momentum_BlackFont.png"; // Absolute URL for email
@@ -19,6 +20,8 @@ $position = clean($_POST['position'] ?? "");
 $company  = clean($_POST['company'] ?? "");
 $revenue  = clean($_POST['company-revenue'] ?? "");
 $team     = clean($_POST['team-size'] ?? "");
+$department= clean($_POST['department'] ?? "");
+$email     = clean($_POST['email'] ?? "");
 $overview = clean($_POST['overview'] ?? "");
 $join     = clean($_POST['join-momentum'] ?? "");
 
@@ -29,22 +32,27 @@ if (!preg_match("/^[A-Za-z][A-Za-z\s'\-]{1,}$/", $position))    $errors[] = "pos
 if (!preg_match("/^[A-Za-z0-9&.\-'\s]{2,}$/", $company))        $errors[] = "company";
 if (!preg_match("/^\d+$/", $revenue))                           $errors[] = "company-revenue";
 if (!preg_match("/^\d+$/", $team) || intval($team) <= 0)        $errors[] = "team-size";
-if (strlen($overview) < 10)                                     $errors[] = "overview";
-if (strlen($join) < 10)                                         $errors[] = "join-momentum";
+if (!preg_match("/^[A-Za-z][A-Za-z\s'\-]{1,}$/", $department))  $errors[] = "department";
+if (!filter_var($email, FILTER_VALIDATE_EMAIL))                 $errors[] = "email";
+// if (strlen($overview) < 10)                                     $errors[] = "overview";
+// if (strlen($join) < 10)                                         $errors[] = "join-momentum";
+if ($overview === "") $errors[] = "overview";
+if ($join === "") $errors[] = "join-momentum";
 
 if ($errors) { 
     echo "error"; 
     exit; 
 }
 
-// Subject
-$subject = "New Application Enrollment: $name";
+// ===== SUBJECTS =====
+$subjectAdmin = "New Application Enrollment: $name";
+$subjectUser  = "Thank you for applying to $SITE_NAME";
 
-// HTML Email Body
+// ===== HTML EMAIL (Admin) =====
 $bodyAdmin = "
 <html>
 <head>
-<title>$subject</title>
+<title>$subjectAdmin</title>
 <style>
     table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
     td, th { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -62,6 +70,8 @@ $bodyAdmin = "
         <tr><th>Company</th><td>$company</td></tr>
         <tr><th>Company Revenue</th><td>$revenue</td></tr>
         <tr><th>Team Size</th><td>$team</td></tr>
+        <tr><th>Department</th><td>$department</td></tr>
+        <tr><th>Email</th><td>$email</td></tr>
         <tr><th>Overview</th><td>".nl2br(htmlspecialchars($overview))."</td></tr>
         <tr><th>Reason to Join</th><td>".nl2br(htmlspecialchars($join))."</td></tr>
     </table>
@@ -72,28 +82,54 @@ $bodyAdmin = "
 </html>
 ";
 
-// ==== SEND EMAIL USING SMTP2GO API ====
-$payload = json_encode([
-    "api_key" => $SMTP2GO_API_KEY,
-    "to"      => [$ADMIN_EMAIL],
-    "sender"  => $FROM_EMAIL,
-    "subject" => $subject,
-    "html_body" => $bodyAdmin
-]);
+// ===== HTML EMAIL (User) =====
+$bodyUser = "
+<html>
+<head><title>$subjectUser</title></head>
+<body>
+    <div style='text-align:center; padding:10px;'>
+        <h2 style='margin:5px 0;'>Thank you for applying to $SITE_NAME</h2>
+    </div>
+    <p>Hi $name,</p>
+    <p>Thanks for submitting your application! We've received it and our team will review your details. 
+    We'll get back to you soon.</p>
+    <div style='font-size:12px;color:#666;text-align:center;margin-top:20px;'>
+        &copy; ".date('Y')." $SITE_NAME. All rights reserved.
+    </div>
+</body>
+</html>
+";
 
-$ch = curl_init("https://api.smtp2go.com/v3/email/send");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+// ===== SEND VIA SMTP2GO =====
+function sendSMTP2GO($to, $subject, $htmlBody, $from, $replyTo = null) {
+    global $SMTP2GO_API_KEY;
 
-$response = curl_exec($ch);
-curl_close($ch);
+    $payload = [
+        "api_key"   => $SMTP2GO_API_KEY,
+        "to"        => [$to],
+        "sender"    => $from,
+        "subject"   => $subject,
+        "html_body" => $htmlBody
+    ];
 
-// Optional: You can check $response if you want
-// file_put_contents('smtp2go_log.txt', $response.PHP_EOL, FILE_APPEND);
+    if ($replyTo) {
+        $payload["reply_to"] = $replyTo;
+    }
+
+    $ch = curl_init("https://api.smtp2go.com/v3/email/send");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return $response;
+}
+
+// Send mails
+sendSMTP2GO($ADMIN_EMAIL, $subjectAdmin, $bodyAdmin, $FROM_EMAIL, $email);
+sendSMTP2GO($email, $subjectUser, $bodyUser, $FROM_EMAIL);
 
 echo "success";
-
-
 ?>

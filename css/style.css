@@ -674,6 +674,12 @@ textarea.error-border::placeholder {
 
 /* Responsive */
 
+@media screen and (max-width: 1300px) {
+    nav ul li {
+        margin: 0 10px;
+    }
+}
+
 @media screen and (min-width: 1280px) {
 
 
@@ -690,6 +696,11 @@ textarea.error-border::placeholder {
         height: 450px;
         object-fit: cover;
         object-position: center;
+    }
+
+    .header-container {
+        justify-content: space-around;
+        padding: 20px 50px;
     }
 }
 
@@ -759,10 +770,6 @@ textarea.error-border::placeholder {
 }
 
 @media screen and (min-width: 1032px) {
-    .header-container {
-        justify-content: space-around;
-        padding: 20px 50px;
-    }
 
     .who-image img {
         border-radius: 20px 0px 0px 20px;

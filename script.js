@@ -27,15 +27,16 @@ document.addEventListener("DOMContentLoaded", () => {
     company: (f) => rules.companyLike(f.value) ? null : "Letters/numbers/& . - ' allowed.",
     "company-revenue": (f) => rules.numbersOnly(f.value) ? null : "Numbers only.",
     "team-size": (f) => rules.positiveInt(f.value) ? null : "Enter a number greater than 0.",
-    overview: (f) => rules.minLen10(f.value) ? null : "Please write at least 10 characters.",
-    "join-momentum": (f) => rules.minLen10(f.value) ? null : "Please write at least 10 characters.",
+    department: (f) => rules.nameLike(f.value) ? null : "Letters, spaces, ' and - only.",
+    overview: (f) => null,
+    "join-momentum": (f) => null,
 
     // Contact Us
     fname: (f) => rules.nameLike(f.value) ? null : "First name: letters only.",
     lname: (f) => rules.nameLike(f.value) ? null : "Last name: letters only.",
     email: (f) => rules.email(f.value) ? null : "Enter a valid email.",
     tel:   (f) => rules.phone(f.value) ? null : "Phone: 7–15 digits (symbols allowed).",
-    msg:   (f) => rules.minLen5(f.value) ? null : "Message must be at least 5 characters."
+    msg:   (f) => null
   };
 
   function validateForm(form) {
