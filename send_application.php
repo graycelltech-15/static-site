@@ -1,8 +1,8 @@
 <?php
 
 // ===== CONFIG =====
-// $ADMIN_EMAIL = "marketing@bistraining.ca";
-$ADMIN_EMAIL = "arshdeep@graycelltech.com"; //admin email     
+
+$ADMIN_EMAIL = "marketing@bistraining.ca"; //admin email     
 $FROM_EMAIL  = "info@momentum-group.ca";     
 $SITE_NAME   = "Momentum";
 $LOGO_URL    = "https://yourdomain.com/images/Logo_Momentum_BlackFont.png"; // Absolute URL for email
