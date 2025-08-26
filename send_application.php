@@ -1,7 +1,6 @@
 <?php
 
-// ===== CONFIG =====
-
+// ===== CONFIG =====    
 $ADMIN_EMAIL = "marketing@bistraining.ca"; //admin email     
 $FROM_EMAIL  = "info@momentum-group.ca";     
 $SITE_NAME   = "Momentum";
@@ -22,6 +21,7 @@ $revenue  = clean($_POST['company-revenue'] ?? "");
 $team     = clean($_POST['team-size'] ?? "");
 $department= clean($_POST['department'] ?? "");
 $email     = clean($_POST['email'] ?? "");
+$tel       = clean($_POST['tel'] ?? "");
 $overview = clean($_POST['overview'] ?? "");
 $join     = clean($_POST['join-momentum'] ?? "");
 
@@ -30,12 +30,11 @@ $errors = [];
 if (!preg_match("/^[A-Za-z][A-Za-z\s'\-]{1,}$/", $name))        $errors[] = "name";
 if (!preg_match("/^[A-Za-z][A-Za-z\s'\-]{1,}$/", $position))    $errors[] = "position";
 if (!preg_match("/^[A-Za-z0-9&.\-'\s]{2,}$/", $company))        $errors[] = "company";
-if (!preg_match("/^\d+$/", $revenue))                           $errors[] = "company-revenue";
+if ($revenue !== "" && !preg_match("/^\d+$/", $revenue))        $errors[] = "company-revenue";
 if (!preg_match("/^\d+$/", $team) || intval($team) <= 0)        $errors[] = "team-size";
 if (!preg_match("/^[A-Za-z][A-Za-z\s'\-]{1,}$/", $department))  $errors[] = "department";
 if (!filter_var($email, FILTER_VALIDATE_EMAIL))                 $errors[] = "email";
-// if (strlen($overview) < 10)                                     $errors[] = "overview";
-// if (strlen($join) < 10)                                         $errors[] = "join-momentum";
+if ($tel !== "" && !preg_match("/^[0-9()+\-\s]{7,20}$/", $tel)) $errors[] = "tel";
 if ($overview === "") $errors[] = "overview";
 if ($join === "") $errors[] = "join-momentum";
 
@@ -49,6 +48,9 @@ $subjectAdmin = "New Application Enrollment: $name";
 $subjectUser  = "Thank you for applying to $SITE_NAME";
 
 // ===== HTML EMAIL (Admin) =====
+$revenueRow = !empty($revenue) ? "<tr><th>Company Revenue</th><td>$revenue</td></tr>" : "";
+$phoneRow   = !empty($tel) ? "<tr><th>Phone</th><td>$tel</td></tr>" : "";
+
 $bodyAdmin = "
 <html>
 <head>
@@ -68,10 +70,11 @@ $bodyAdmin = "
         <tr><th>Name</th><td>$name</td></tr>
         <tr><th>Position</th><td>$position</td></tr>
         <tr><th>Company</th><td>$company</td></tr>
-        <tr><th>Company Revenue</th><td>$revenue</td></tr>
+        $revenueRow
         <tr><th>Team Size</th><td>$team</td></tr>
         <tr><th>Department</th><td>$department</td></tr>
         <tr><th>Email</th><td>$email</td></tr>
+        $phoneRow
         <tr><th>Overview</th><td>".nl2br(htmlspecialchars($overview))."</td></tr>
         <tr><th>Reason to Join</th><td>".nl2br(htmlspecialchars($join))."</td></tr>
     </table>

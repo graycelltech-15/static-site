@@ -20,57 +20,85 @@ document.addEventListener("DOMContentLoaded", () => {
     field.classList.toggle("error-border", !!msg);
   };
 
-  const validators = {
-    // Application Enrollment
-    name: (f) => rules.nameLike(f.value) ? null : "Only letters, spaces, ' and - (min 2 chars).",
-    position: (f) => rules.nameLike(f.value) ? null : "Only letters, spaces, ' and -.",
-    company: (f) => rules.companyLike(f.value) ? null : "Letters/numbers/& . - ' allowed.",
-    "company-revenue": (f) => rules.numbersOnly(f.value) ? null : "Numbers only.",
-    "team-size": (f) => rules.positiveInt(f.value) ? null : "Enter a number greater than 0.",
-    department: (f) => rules.nameLike(f.value) ? null : "Letters, spaces, ' and - only.",
-    overview: (f) => null,
-    "join-momentum": (f) => null,
+    const validators = {
+      // Application Enrollment
+      name: (f) => rules.nameLike(f.value) ? null : "Only letters, spaces, ' and - (min 2 chars).",
+      position: (f) => rules.nameLike(f.value) ? null : "Only letters, spaces, ' and -.",
+      company: (f) => rules.companyLike(f.value) ? null : "Letters/numbers/& . - ' allowed.",
+      "company-revenue": (f) => {
+        if (f.form.id === "applicationForm" && f.value.trim() === "") return null; // optional
+        return rules.numbersOnly(f.value) ? null : "Numbers only.";
+      },
+      "team-size": (f) => rules.positiveInt(f.value) ? null : "Enter a number greater than 0.",
+      department: (f) => rules.nameLike(f.value) ? null : "Letters, spaces, ' and - only.",
+      overview: () => null,
+      "join-momentum": () => null,
 
-    // Contact Us
-    fname: (f) => rules.nameLike(f.value) ? null : "First name: letters only.",
-    lname: (f) => rules.nameLike(f.value) ? null : "Last name: letters only.",
-    email: (f) => rules.email(f.value) ? null : "Enter a valid email.",
-    tel:   (f) => rules.phone(f.value) ? null : "Phone: 7–15 digits (symbols allowed).",
-    msg:   (f) => null
+      // Contact Us
+      fname: (f) => rules.nameLike(f.value) ? null : "First name: letters only.",
+      lname: (f) => rules.nameLike(f.value) ? null : "Last name: letters only.",
+      email: (f) => rules.email(f.value) ? null : "Enter a valid email.",
+      tel: (f) => {
+        if (f.form.id === "applicationForm" && f.value.trim() === "") return null; // optional in application
+        return rules.phone(f.value) ? null : "Phone: 7–15 digits (symbols allowed).";
+      },
+      msg: () => null
   };
 
-  function validateForm(form) {
-    let ok = true;
-    const fields = form.querySelectorAll("input, textarea");
-    fields.forEach(field => {
-      const name = field.getAttribute("name");
-      const vfn = validators[name];
-      if (!vfn) return; // skip fields without rules
-      const err = field.value.trim() === "" ? "This field is required." : vfn(field);
-      setError(field, err);
-      if (err) ok = false;
-    });
-    return ok;
-  }
+    function validateForm(form) {
+      let ok = true;
+      const fields = form.querySelectorAll("input, textarea");
+      fields.forEach(field => {
+        const name = field.getAttribute("name");
+        const vfn = validators[name];
+        if (!vfn) return;
+
+        let err = null;
+
+        // If application form + optional field left blank → skip required msg
+        if (
+          form.id === "applicationForm" &&
+          (name === "company-revenue" || name === "tel") &&
+          field.value.trim() === ""
+        ) {
+          err = null;
+        } else {
+          err = field.value.trim() === "" ? "This field is required." : vfn(field);
+        }
+
+        setError(field, err);
+        if (err) ok = false;
+      });
+      return ok;
+    }
 
   function wireLiveValidation(form) {
     form.querySelectorAll("input, textarea").forEach(field => {
+      const computeError = () => {
+        const name = field.getAttribute("name");
+        const vfn = validators[name];
+        if (!vfn) return null;
+
+        const isApplication = form.id === "applicationForm";
+        const isOptionalInApplication = isApplication && (name === "company-revenue" || name === "tel");
+
+        // Optional fields on application form: no error when empty
+        if (isOptionalInApplication && field.value.trim() === "") return null;
+
+        // Default behavior
+        return field.value.trim() === "" ? "This field is required." : vfn(field);
+      };
+
       field.addEventListener("input", () => {
-        const name = field.getAttribute("name");
-        const vfn = validators[name];
-        if (!vfn) return;
-        const err = field.value.trim() === "" ? "This field is required." : vfn(field);
-        setError(field, err);
+        setError(field, computeError());
       });
+
       field.addEventListener("blur", () => {
-        const name = field.getAttribute("name");
-        const vfn = validators[name];
-        if (!vfn) return;
-        const err = field.value.trim() === "" ? "This field is required." : vfn(field);
-        setError(field, err);
+        setError(field, computeError());
       });
     });
   }
+
 
   // Application form (AJAX + thank you)
   const applicationForm = document.getElementById("applicationForm");
