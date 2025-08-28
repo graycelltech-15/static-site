@@ -1,6 +1,6 @@
 <?php
 
-// ===== CONFIG =====    
+// ===== CONFIG =====       
 $ADMIN_EMAIL = "marketing@bistraining.ca"; //admin email     
 $FROM_EMAIL  = "info@momentum-group.ca";     
 $SITE_NAME   = "Momentum";
@@ -11,6 +11,18 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(405); 
     exit; 
 }
+
+$secretKey = "6LeicLUrAAAAAKMENuOOV2IA6zG7rN7gdTCaPTi_";
+$recaptchaResponse = $_POST['g-recaptcha-response'] ?? "";
+
+$verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . urlencode($secretKey) . "&response=" . urlencode($recaptchaResponse));
+$responseData = json_decode($verifyResponse);
+
+if (!$responseData->success) {
+    echo "error";
+    exit;
+}
+
 
 function clean($s) { return trim(strip_tags($s ?? "")); }
 

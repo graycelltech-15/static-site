@@ -104,67 +104,114 @@ document.addEventListener("DOMContentLoaded", () => {
   const applicationForm = document.getElementById("applicationForm");
   if (applicationForm) {
     wireLiveValidation(applicationForm);
-    applicationForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (!validateForm(applicationForm)) return;
+  applicationForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-      fetch(applicationForm.getAttribute("action"), {
-        method: "POST",
-        body: new FormData(applicationForm)
-      })
-        .then(r => r.text())
-        .then(t => {
-          if (t.trim() === "success") {
-        applicationForm.reset();
-        applicationForm.querySelectorAll(".error-msg").forEach(s => (s.textContent = ""));
-        applicationForm.querySelectorAll(".error-border").forEach(el => el.classList.remove("error-border"));
-        
-        const successEl = document.getElementById("application-success");
-        successEl.style.display = "block";
+    let isValid = validateForm(applicationForm);
 
-        // Hide after 5 seconds
-    setTimeout(() => {
-        successEl.style.display = "none";
-    }, 5000);
+    // Always check reCAPTCHA
+    const recaptchaResponse = grecaptcha.getResponse(applicationRecaptchaWidgetId);
+    if (!recaptchaResponse) {
+      document.getElementById("application-recaptcha-error").textContent =
+        "Please verify reCAPTCHA.";
+      isValid = false;
+    } else {
+      document.getElementById("application-recaptcha-error").textContent = "";
     }
- else {
-            alert("There was a problem submitting the form. Please try again.");
-          }
-        })
-        .catch(() => alert("Network error. Please try again."));
-    });
+
+    if (!isValid) return; // stop if invalid
+
+    const submitBtn = applicationForm.querySelector(".submit-btn");
+    submitBtn.disabled = true; // disable immediately
+
+    const formData = new FormData(applicationForm);
+    formData.append("g-recaptcha-response", recaptchaResponse);
+
+    fetch(applicationForm.getAttribute("action"), {
+      method: "POST",
+      body: formData
+    })
+      .then((r) => r.text())
+      .then((t) => {
+        if (t.trim() === "success") {
+          grecaptcha.reset(applicationRecaptchaWidgetId);
+          applicationForm.reset();
+          applicationForm.querySelectorAll(".error-msg").forEach((s) => (s.textContent = ""));
+          applicationForm.querySelectorAll(".error-border").forEach((el) =>
+            el.classList.remove("error-border")
+          );
+          const successEl = document.getElementById("application-success");
+          successEl.style.display = "block";
+          setTimeout(() => {
+            successEl.style.display = "none";
+          }, 5000);
+        } else {
+          alert("There was a problem submitting the form. Please try again.");
+        }
+        submitBtn.disabled = false; // re-enable after response
+      })
+      .catch(() => {
+        alert("Network error. Please try again.");
+        submitBtn.disabled = false; // re-enable on error
+      });
+  });
+
   }
 
   // Contact form (AJAX; sends to admin + user)
   const contactForm = document.getElementById("contactForm");
   if (contactForm) {
     wireLiveValidation(contactForm);
-    contactForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (!validateForm(contactForm)) return;
+  contactForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-      fetch(contactForm.getAttribute("action"), {
-        method: "POST",
-        body: new FormData(contactForm)
+    let isValid = validateForm(contactForm);
+
+    // Always check reCAPTCHA
+    const recaptchaResponse = grecaptcha.getResponse(contactRecaptchaWidgetId);
+    if (!recaptchaResponse) {
+      document.getElementById("contact-recaptcha-error").textContent =
+        "Please verify reCAPTCHA.";
+      isValid = false;
+    } else {
+      document.getElementById("contact-recaptcha-error").textContent = "";
+    }
+
+    if (!isValid) return; // stop if invalid
+
+    const submitBtn = contactForm.querySelector(".submit-btn");
+    submitBtn.disabled = true; // disable immediately
+
+    const formData = new FormData(contactForm);
+    formData.append("g-recaptcha-response", recaptchaResponse);
+
+    fetch(contactForm.getAttribute("action"), {
+      method: "POST",
+      body: formData
+    })
+      .then((r) => r.text())
+      .then((t) => {
+        if (t.trim() === "success") {
+          grecaptcha.reset(contactRecaptchaWidgetId);
+          contactForm.reset();
+          contactForm.querySelectorAll(".error-msg").forEach((s) => (s.textContent = ""));
+          contactForm.querySelectorAll(".error-border").forEach((el) =>
+            el.classList.remove("error-border")
+          );
+          const successEl = document.getElementById("contact-success");
+          successEl.style.display = "block";
+          setTimeout(() => {
+            successEl.style.display = "none";
+          }, 5000);
+        } else {
+          alert("There was a problem submitting the form. Please try again.");
+        }
+        submitBtn.disabled = false; // re-enable after response
       })
-        .then(r => r.text())
-        .then(t => {
-          if (t.trim() === "success") {
-            contactForm.reset();
-            contactForm.querySelectorAll(".error-msg").forEach(s => (s.textContent = ""));
-            contactForm.querySelectorAll(".error-border").forEach(el => el.classList.remove("error-border"));
-           
-             const successEl = document.getElementById("contact-success");
-        successEl.style.display = "block";
-
-             setTimeout(() => {
-        successEl.style.display = "none";
-    }, 5000);
-          } else {
-            alert("There was a problem submitting the form. Please try again.");
-          }
-        })
-        .catch(() => alert("Network error. Please try again."));
-    });
+      .catch(() => {
+        alert("Network error. Please try again.");
+        submitBtn.disabled = false; // re-enable on error
+      });
+  });
   }
 });

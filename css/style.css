@@ -327,6 +327,7 @@ nav ul li a:hover {
 
 .two-col-sec .image img {
     border-radius: 20px;
+    max-width: 670px;
 }
 
 .two-col-sec .text {
@@ -470,6 +471,14 @@ nav ul li a:hover {
     padding: 12px 40px;
 }
 
+#application-recaptcha-error {
+    text-align: left;
+}
+
+#contact-us .form-submit {
+    margin-top: -20px;
+}
+
 /* industry groups */
 
 .industry-groups {
@@ -572,7 +581,7 @@ footer {
 form {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 32px;
+    gap: 25px;
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -682,6 +691,11 @@ textarea.error-border::placeholder {
 @media screen and (max-width: 1300px) {
     nav ul li {
         margin: 0 10px;
+    }
+
+    #contactForm {
+        display: flex;
+       flex-direction: column;
     }
 }
 

@@ -17,6 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
     <link href="css/style.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/50443fe070.js" crossorigin="anonymous"></script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadRecaptchaCallback&render=explicit" async defer></script>
+    
 </head>
 
 <body>
@@ -267,7 +269,7 @@
                     <h2>Value of a peer group</h2>
                     <p>A peer group provides access to members’ collective experience and is a great resource for
                         practical solutions. The group provides a space to share ideas, test strategies, and gain new
-                        perspectives—which often allows for the identification and implementation of imaginative,
+                        perspectives, which often allows for the identification and implementation of imaginative,
                         previously unknown approaches. By learning from real-world experiences, members can avoid costly
                         mistakes, accelerate growth, and build confidence. Beyond problem-solving support, peer groups
                         provide accountability, inspiration, and a network of support that strengthens both personal and
@@ -331,6 +333,10 @@
                             id="join-momentum" name="join-momentum"></textarea>
                         <span class="error-msg"></span>
                     </div>
+                    <div class="form-group text-center recaptcha-group">
+                        <div id="application-recaptcha"></div>
+                        <span class="error-msg" id="application-recaptcha-error"></span>
+                    </div>
                     <div class="text-center enroll-submit form-width-100">
                         <button type="submit" class="submit-btn">Submit</button>
                     </div>
@@ -391,7 +397,7 @@
                 <img src="images/Logo_Momentum_WhiteFont.png" alt="Momentum">
                 <p>We are Momentum, a dynamic network of experienced leaders who believe in the power of shared insight,
                     professional growth, and trusted connection. Our peer group brings together individuals who navigate
-                    leadership challenges with integrity and purpose—across industries, functions, and organizations.
+                    leadership challenges with integrity and purpose, across industries, functions, and organizations.
                 </p>
                 <div class="footer-contact">
                     <!-- <p><a href="tel:(780) 410 1660"><i class="fa fa-phone"></i>(780) 410 1660</a></p> -->
@@ -425,7 +431,13 @@
                         <textarea rows="3" placeholder="Message" id="msg" name="msg"></textarea>
                         <span class="error-msg"></span>
                     </div>
-                    <button type="submit" class="submit-btn">Submit</button>
+                    <div class="form-group recaptcha-group">
+                        <div id="contact-recaptcha"></div>
+                        <span class="error-msg" id="contact-recaptcha-error"></span>
+                    </div>
+                    <div class="form-width-100 form-submit">
+                        <button type="submit" class="submit-btn">Submit</button>
+                    </div>
                 </form>
 
                 <!-- optional success message for contact -->
@@ -505,40 +517,23 @@
         });
     </script>
     <script src="script.js"></script>
+
     <script>
-        // document.addEventListener("DOMContentLoaded", function () {
-        //     const form = document.querySelector(".footer-right form"); // or your specific selector
-        //     const messageBox = document.createElement("div");
-        //     messageBox.style.display = "none";
-        //     form.after(messageBox);
+    let contactRecaptchaWidgetId, applicationRecaptchaWidgetId;
 
-        //     form.addEventListener("submit", function (e) {
-        //         e.preventDefault();
-        //         const formData = new FormData(form);
+    function onloadRecaptchaCallback() {
+        // Contact form
+        contactRecaptchaWidgetId = grecaptcha.render('contact-recaptcha', {
+        'sitekey': '6LeicLUrAAAAANHw2DHY-L6pXCRLPHmNKVKPvl7Y'
+        });
 
-        //         fetch("send-contact.php", {
-        //             method: "POST",
-        //             body: formData
-        //         })
-        //             .then(res => res.text())
-        //             .then(res => {
-        //                 if (res.trim() === "success") {
-        //                     messageBox.textContent = "Thank you! Your message has been sent.";
-        //                     messageBox.style.color = "green";
-        //                     messageBox.style.display = "block";
-        //                     setTimeout(() => messageBox.style.display = "none", 5000);
-        //                     form.reset();
-        //                 } else {
-        //                     messageBox.textContent = "Error: Please check your inputs.";
-        //                     messageBox.style.color = "red";
-        //                     messageBox.style.display = "block";
-        //                     setTimeout(() => messageBox.style.display = "none", 5000);
-        //                 }
-        //             });
-        //     });
-        // });
-
+        // Application form
+        applicationRecaptchaWidgetId = grecaptcha.render('application-recaptcha', {
+        'sitekey': '6LeicLUrAAAAANHw2DHY-L6pXCRLPHmNKVKPvl7Y'
+        });
+    }
     </script>
+
 </body>
 
 </html>
