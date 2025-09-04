@@ -650,8 +650,19 @@ textarea {
     margin-left: 10px;
     font-size: 16px;
     text-decoration: none;
-    display: none;
 }
+
+.policy-links a {
+    color: #ccc;
+    margin-left: 10px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.policy-links a:hover {
+    text-decoration: underline;
+}
+
 
 .social-icons a:hover {
     color: #00a6d3;
@@ -686,6 +697,31 @@ textarea.error-border::placeholder {
     color: #e11d48;
 }
 
+/* policies pages */
+
+.policy-page {
+    max-width: 1200px;
+    margin: auto;
+    padding: 50px 20px;
+}
+
+.policy-page h2 {
+    font-size: 26px;
+}
+
+.policy-page .list-none {
+    padding-left: 12px;
+}
+
+.policy-page li {
+    line-height: 1.5em;
+    font-size: 18px;
+}
+
+.policy-page .list-none li {
+    list-style: none;
+}
+
 /* Responsive */
 
 @media screen and (max-width: 1300px) {
@@ -695,7 +731,7 @@ textarea.error-border::placeholder {
 
     #contactForm {
         display: flex;
-       flex-direction: column;
+        flex-direction: column;
     }
 }
 

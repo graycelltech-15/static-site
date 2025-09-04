@@ -1,7 +1,7 @@
 <?php
 
 // ===== CONFIG =====       
-$ADMIN_EMAIL = "marketing@bistraining.ca"; //admin email  
+$ADMIN_EMAIL = "marketing@bistraining.ca"; //admin email 
 $FROM_EMAIL  = "info@momentum-group.ca";     
 $SITE_NAME   = "Momentum";
 $LOGO_URL    = "https://yourdomain.com/images/Logo_Momentum_BlackFont.png"; // Absolute URL for email
@@ -12,8 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit; 
 }
 
-$secretKey = "6LeicLUrAAAAAKMENuOOV2IA6zG7rN7gdTCaPTi_"; //original
-// $secretKey = "6LeXXLUrAAAAAC-TZI8nVhQfsXXFGBWMHNyqFSvy"; //testing
+// $secretKey = "6LeicLUrAAAAAKMENuOOV2IA6zG7rN7gdTCaPTi_"; //original
+$secretKey = "6LdB2L0rAAAAAL6_OfU2l3vm2UGNwn8eCkw-o6sg"; //testing
 
 $recaptchaResponse = $_POST['g-recaptcha-response'] ?? "";
 

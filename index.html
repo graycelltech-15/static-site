@@ -450,11 +450,16 @@
         <!-- Bottom -->
         <div class="footer-bottom">
             <p>Copyright 2025 © Momentum. All rights reserved.</p>
-            <div class="social-icons">
+            <div class="policy-links">
+                <a href="term-of-use.html">Terms of Use</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="cookies-policy.html">Cookies Policy</a>
+            </div>
+            <!-- <div class="social-icons">
                 <a href="#"><i class="fa fa-facebook-f"></i></a>
                 <a href="#"><i class="fa fa-instagram"></i></a>
                 <a href="#"><i class="fa fa-linkedin"></i></a>
-            </div>
+            </div> -->
         </div>
     </footer>
 
@@ -524,14 +529,14 @@
     function onloadRecaptchaCallback() {
         // Contact form
         //original site key 6LeicLUrAAAAANHw2DHY-L6pXCRLPHmNKVKPvl7Y
-        //testing site key 6LeXXLUrAAAAAPjgVwrPS8oGVP4j-ixc6d6TB-Zo
+        //testing site key 6LdB2L0rAAAAANVI0OQ26D2Q0h3uuPBA0DK_I6NM
         contactRecaptchaWidgetId = grecaptcha.render('contact-recaptcha', {
-        'sitekey': '6LeicLUrAAAAANHw2DHY-L6pXCRLPHmNKVKPvl7Y'
+        'sitekey': '6LdB2L0rAAAAANVI0OQ26D2Q0h3uuPBA0DK_I6NM'
         });
 
         // Application form
         applicationRecaptchaWidgetId = grecaptcha.render('application-recaptcha', {
-        'sitekey': '6LeicLUrAAAAANHw2DHY-L6pXCRLPHmNKVKPvl7Y'
+        'sitekey': '6LdB2L0rAAAAANVI0OQ26D2Q0h3uuPBA0DK_I6NM'
         });
     }
     </script>
