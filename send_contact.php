@@ -12,7 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit; 
 }
 
-$secretKey = "6LeicLUrAAAAAKMENuOOV2IA6zG7rN7gdTCaPTi_";
+$secretKey = "6LeicLUrAAAAAKMENuOOV2IA6zG7rN7gdTCaPTi_"; // original
+// $secretKey = "6LeXXLUrAAAAAC-TZI8nVhQfsXXFGBWMHNyqFSvy"; // testing
 $recaptchaResponse = $_POST['g-recaptcha-response'] ?? "";
 
 $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . urlencode($secretKey) . "&response=" . urlencode($recaptchaResponse));
